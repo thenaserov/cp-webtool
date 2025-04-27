@@ -299,18 +299,15 @@ button {
     document.getElementById('getButton').addEventListener('click', connectFun);  
     document.getElementById('send-idtag-button').addEventListener('click', function() {  
             const inputText = document.getElementById('idtag-input-text').value.trim();  
-            const macAddressPattern = /^(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2}|[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4})$/;  
             if (inputText === '') {  
-                alert('Please enter a tag before saving.');  
-            } else if (!macAddressPattern.test(inputText)) {  
-                alert('Please enter a valid MAC address.');  
+                alert('Please enter some text before saving.');  
             } else {  
                 const li = document.createElement('li');  
                 li.textContent = inputText;  
                 document.getElementById('tags-list').appendChild(li);  
                 document.getElementById('input-text').value = '';  
             }  
-        });
+        });  
         
         document.getElementById('send-to-server-button').addEventListener('click', function() {  
             const listItems = document.querySelectorAll('#tags-list li');  
