@@ -269,11 +269,23 @@ button {
                 <center>
                     <button type="button" class="idtag-button" id="idtag-button"> ID Tags Page</button>
                 </center>
+                
             </div> 
         
         <div class="section" id="sectionidtagslist">
             <center>
-                <button type="button" class="idtag-button" id="idtag-button-back-to-full-page"> Full Page</button>
+                <div>
+                    <input type="text" id="idtag-input-text" placeholder="Enter MAC address"> </input>
+                    <button type="button" class="idtag-button" id="send-idtag-button"> Save</button>
+                    <br>
+                </div>
+                <br>
+                <ul id="tags-list"></ul> 
+                <div>
+                    <button type="button" class="idtag-button" id="idtag-button-back-to-full-page"> Full Page</button>
+                    <button type="button" class="idtag-button" id="send-to-server-button"> Send to Server</button>
+                </div>
+
             </center>
         </div> 
         </center>
@@ -285,7 +297,47 @@ button {
     document.getElementById('idtag-button-back-to-full-page').addEventListener('click', showFullPage);
     document.getElementById('setButton').addEventListener('click', save);  
     document.getElementById('getButton').addEventListener('click', connectFun);  
-    
+    document.getElementById('send-idtag-button').addEventListener('click', function() {  
+            const inputText = document.getElementById('idtag-input-text').value.trim();  
+            const macAddressPattern = /^(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2}|[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4})$/;  
+            if (inputText === '') {  
+                alert('Please enter a tag before saving.');  
+            } else if (!macAddressPattern.test(inputText)) {  
+                alert('Please enter a valid MAC address.');  
+            } else {  
+                const li = document.createElement('li');  
+                li.textContent = inputText;  
+                document.getElementById('tags-list').appendChild(li);  
+                document.getElementById('input-text').value = '';  
+            }  
+        });
+        
+        document.getElementById('send-to-server-button').addEventListener('click', function() {  
+            const listItems = document.querySelectorAll('#tags-list li');  
+            const macAddresses = Array.from(listItems).map(li => li.textContent);  
+            if (macAddresses.length === 0) {  
+                alert('No MAC addresses to send.');  
+                return;  
+            }  
+            const xhr = new XMLHttpRequest();  
+            xhr.open('POST', 'https://your-server-endpoint.com/api/mac-addresses', true); // Change to your server endpoint  
+            xhr.setRequestHeader('Content-Type', 'application/json');  
+            const dataToSend = JSON.stringify({ macAddresses: macAddresses });  
+            xhr.onreadystatechange = function() {  
+                if (xhr.readyState === XMLHttpRequest.DONE) {  
+                    if (xhr.status === 200) {  
+                        alert('MAC addresses sent successfully!');  
+                    } else {  
+                        alert('Error sending MAC addresses. Please try again.');  
+                    }  
+                }  
+            };  
+
+            // Send the request with the data  
+            xhr.send(dataToSend);  
+        });  
+
+
     var idtagsList = document.getElementById("sectionidtagslist");
     idtagsList.style.display = "none";
 
@@ -299,7 +351,6 @@ button {
 // }
 
 function save() {  
-    
     console.log("SET");
     var finalJson = {};
 
@@ -450,11 +501,9 @@ function showIDTags() {
 function showFullPage() {
     var idTagsPage = document.getElementById("sectionidtag");
     var fullPage = document.getElementById("sectionfull");
-    
     idTagsPage.style.display = "block";
     fullPage.style.display = "block";
     idtagsList.style.display = "none";
-
 }
 
 </script>
