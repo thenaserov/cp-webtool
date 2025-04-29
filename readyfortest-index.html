@@ -3,12 +3,11 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <!-- <link rel="stylesheet" href="styles.css"> -->
     
     <title>Configuration Settings</title>  
 </head>
 <style>
-    body {  
+body {  
     font-family: Arial, sans-serif;  
     background-color: #f4f4f4;  
     margin: 0;  
@@ -315,41 +314,33 @@ button {
 function save() {  
     console.log("SET");
     var finalJson = {};
-
-    // Collect connection types using checkbox values  
     var connection = {  
         wifi: document.getElementById('wifi').checked,  
         fourG: document.getElementById('mobile').checked,  
         cable: document.getElementById('lan').checked  
     };  
 
-    // Combine connection types into a single value  
     var data = (connection.wifi ? 1 : 0) + (connection.fourG ? 4 : 0) + (connection.cable ? 2 : 0);  
     finalJson.connection_selected = data.toString();  
-
-    // Collect 4G APN data  
+ 
     finalJson._4G_apn = document.getElementById('apn').value;  
     finalJson._4G_user = document.getElementById('account').value;  
     finalJson._4G_pass = document.getElementById('password').value;  
 
-    // Collect WiFi data  
-    finalJson.wifi_ssid = document.getElementById('wifi-ssid').value; // Note: This may be non-editable as it is 'disabled'  
+    finalJson.wifi_ssid = document.getElementById('wifi-ssid').value; 
     finalJson.wifi_pass = document.getElementById('wifi-password').value;  
 
-    // Collect LAN data  
     finalJson.ip_address = document.getElementById('ip-address').value;  
     finalJson.subnet_mask = document.getElementById('subnet-mask').value;  
     finalJson.default_gateway = document.getElementById('gateway').value;  
     finalJson.dns = document.getElementById('dns').value;  
     finalJson.dhcp = document.getElementById('lan-dhcp').checked ? "Enabled" : "Disabled";  
 
-    // Collect other fields  
     finalJson.server_url = document.getElementById('server-url').value;  
-    finalJson.cp_name = document.getElementById('serial').value; // This is disabled but might be needed  
+    finalJson.cp_name = document.getElementById('serial').value;
     finalJson.auth_key = document.getElementById('auth-key').value;
     finalJson.power_distribution_2 = document.getElementById('power-distribution-2').checked;  
 
-    // Collect CP Configuration   
     finalJson.max_current_ac = document.getElementById('output-current').value;  
     finalJson.charge_mode = document.getElementById('charge-mode').value;  
     finalJson.sampling_method = document.getElementById('sampling-method').value;  
@@ -362,8 +353,6 @@ function save() {
     finalJson.dlb_mode = document.getElementById('dlb-mode').checked;  
     finalJson.diode_detection = document.getElementById('diode-detection').checked;  
     finalJson.power_supply = document.getElementById('power-supply').value;  
-
-    // Collect clamp values  
 
     var xmlhttp = new XMLHttpRequest();  
     xmlhttp.open("POST", "http://192.168.1.1:8080/api/writeconfig");  
@@ -385,7 +374,7 @@ function save() {
             xhrConfig.send(JSON.stringify({ serial: "NONE" }));  
         }  
     };  
-    xmlhttp.send(JSON.stringify(finalJson)); // Send the constructed JSON  
+    xmlhttp.send(JSON.stringify(finalJson));
 }
 
 function populateFields(config) {
@@ -500,9 +489,9 @@ function sendTagsToServer() {
                         alert('Error sending MAC addresses. Please try again.');  
                     }  
                 }  
-            };  
-            // Send the request with the data  
+            };
             xhr.send(dataToSend);
 }
+
 </script>
 </html>
