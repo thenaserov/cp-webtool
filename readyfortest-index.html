@@ -172,13 +172,13 @@ button {
                 </div>  
 
                 <div class="form-group">  
-                    <label for="cp-name">CP Name:</label>  
-                    <input type="text" id="cp-name" value="MCGFF3442953">  
+                    <label for="serial">CP Name:</label>  
+                    <input type="text" id="serial" value="MCGFF3442953">  
                 </div>  
 
                 <div class="form-group">  
-                    <label for="auth-key-2">Authorization Key:</label>  
-                    <input type="text" id="auth-key-2" value="********">  
+                    <label for="auth-key">Authorization Key:</label>  
+                    <input type="text" id="auth-key" value="********">  
                 </div>  
 
                 <div class="form-group">  
@@ -297,44 +297,9 @@ button {
     document.getElementById('idtag-button-back-to-full-page').addEventListener('click', showFullPage);
     document.getElementById('setButton').addEventListener('click', save);  
     document.getElementById('getButton').addEventListener('click', connectFun);  
-    document.getElementById('send-idtag-button').addEventListener('click', function() {  
-            const inputText = document.getElementById('idtag-input-text').value.trim();  
-            if (inputText === '') {  
-                alert('Please enter some text before saving.');  
-            } else {  
-                const li = document.createElement('li');  
-                li.textContent = inputText;  
-                document.getElementById('tags-list').appendChild(li);  
-                document.getElementById('input-text').value = '';  
-            }  
-        });  
-        
-        document.getElementById('send-to-server-button').addEventListener('click', function() {  
-            const listItems = document.querySelectorAll('#tags-list li');  
-            const macAddresses = Array.from(listItems).map(li => li.textContent);  
-            if (macAddresses.length === 0) {  
-                alert('No MAC addresses to send.');  
-                return;  
-            }  
-            const xhr = new XMLHttpRequest();  
-            xhr.open('POST', 'http://192.168.1.1:8080/api/updatedriverlist', true); // Change to your server endpoint  
-            xhr.setRequestHeader('Content-Type', 'application/json');  
-            const dataToSend = JSON.stringify({ macAddresses: macAddresses });  
-            xhr.onreadystatechange = function() {  
-                if (xhr.readyState === XMLHttpRequest.DONE) {  
-                    if (xhr.status === 200) {  
-                        alert('MAC addresses sent successfully!');  
-                    } else {  
-                        alert('Error sending MAC addresses. Please try again.');  
-                    }  
-                }  
-            };  
-
-            // Send the request with the data  
-            xhr.send(dataToSend);  
-        });  
-
-
+    document.getElementById('send-idtag-button').addEventListener('click', addIDTag); 
+    document.getElementById('send-to-server-button').addEventListener('click', sendTagsToServer);  
+              
     var idtagsList = document.getElementById("sectionidtagslist");
     idtagsList.style.display = "none";
 
@@ -380,8 +345,8 @@ function save() {
 
     // Collect other fields  
     finalJson.server_url = document.getElementById('server-url').value;  
-    finalJson.cp_name = document.getElementById('cp-name').value; // This is disabled but might be needed  
-    finalJson.auth_key_2 = document.getElementById('auth-key-2').value;
+    finalJson.cp_name = document.getElementById('serial').value; // This is disabled but might be needed  
+    finalJson.auth_key = document.getElementById('auth-key').value;
     finalJson.power_distribution_2 = document.getElementById('power-distribution-2').checked;  
 
     // Collect CP Configuration   
@@ -442,9 +407,9 @@ function populateFields(config) {
     document.getElementById('dns').value = config.dns || '';
     document.getElementById('lan-dhcp').checked = config.dhcp === "Enabled";
 
-    document.getElementById('server-url').value = config.server_url || '';
-    document.getElementById('cp-name').value = config.cp_name || '';
-    document.getElementById('auth-key-2').value = config.auth_key_2 || '';
+    document.getElementById('server-url').value = config.server_address || '';
+    document.getElementById('serial').value = config.cp_name || '';
+    document.getElementById('auth-key').value = config.auth_key || '';
     document.getElementById('power-distribution-2').checked = config.power_distribution_2;
 
     document.getElementById('auth-key').value = config.auth_key || '';
@@ -503,5 +468,41 @@ function showFullPage() {
     idtagsList.style.display = "none";
 }
 
+function addIDTag() 
+{  
+        const inputText = document.getElementById('idtag-input-text').value.trim();  
+        if (inputText === '') {  
+            alert('Please enter some text before saving.');  
+        } else {  
+            const li = document.createElement('li');  
+            li.textContent = inputText;  
+            document.getElementById('tags-list').appendChild(li);  
+            document.getElementById('input-text').value = '';  
+    }  
+}
+
+function sendTagsToServer() {
+    const listItems = document.querySelectorAll('#tags-list li');  
+            const macAddresses = Array.from(listItems).map(li => li.textContent);  
+            if (macAddresses.length === 0) {  
+                alert('No MAC addresses to send.');  
+                return;  
+            }  
+            const xhr = new XMLHttpRequest();  
+            xhr.open('POST', 'http://192.168.1.1:8080/api/updatedriverlist', true); // Change to your server endpoint  
+            xhr.setRequestHeader('Content-Type', 'application/json');  
+            const dataToSend = JSON.stringify({ macAddresses: macAddresses });  
+            xhr.onreadystatechange = function() {  
+                if (xhr.readyState === XMLHttpRequest.DONE) {  
+                    if (xhr.status === 200) {  
+                        alert('MAC addresses sent successfully!');  
+                    } else {  
+                        alert('Error sending MAC addresses. Please try again.');  
+                    }  
+                }  
+            };  
+            // Send the request with the data  
+            xhr.send(dataToSend);
+}
 </script>
 </html>
